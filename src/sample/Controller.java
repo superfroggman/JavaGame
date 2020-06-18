@@ -4,7 +4,6 @@ import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -24,7 +23,8 @@ public class Controller {
     private Rectangle paddleR;
 
 
-    double spdMultiplier = 0.0000005;
+    double ballSpdMultiplier = 0.000001;
+    double paddleSpdMultiplier = 0.0000005;
 
     double gameW = 800;
     double gameH = 500;
@@ -49,10 +49,10 @@ public class Controller {
 
     long prevTime = 0;
 
-    boolean keyLUP = false;
+    boolean keyLUp = false;
     boolean keyLDown = false;
 
-    boolean keyRUP = false;
+    boolean keyRUp = false;
     boolean keyRDown = false;
 
     public void roundSetup() {
@@ -83,9 +83,13 @@ public class Controller {
 
 
         //Set initial ball speed
-        ballXspd = Math.random() * spdMultiplier;
+        ballXspd = Math.random();
+        if (ballXspd < .5) {
+            ballXspd = .5;
+        }
+        ballXspd *= ballSpdMultiplier;
         if (Math.random() < .5) ballXspd *= -1; //50% chance at inverting direction
-        ballYspd = Math.random() * spdMultiplier;
+        ballYspd = Math.random() * ballSpdMultiplier;
         if (Math.random() < .5) ballYspd *= -1; //50% chance at inverting direction
 
         System.out.println("xSpd: " + ballXspd + " ySpd: " + ballYspd);
@@ -113,9 +117,23 @@ public class Controller {
      * @param dT
      */
     public void onNewFrame(long dT) {
+        checkWallCollision();
+        checkPaddleCollision();
+        checkInputs();
 
-
-
+        //Move paddles based on inputs
+        if (keyLUp && paddleLY > 0) {
+            paddleLY -= paddleSpdMultiplier * dT;
+        }
+        if (keyLDown && paddleLY + paddleLH < gameH){
+            paddleLY += paddleSpdMultiplier * dT;
+        }
+        if (keyRUp && paddleRY > 0) {
+            paddleRY -= paddleSpdMultiplier * dT;
+        }
+        if (keyRDown && paddleRY + paddleRH < gameH){
+            paddleRY += paddleSpdMultiplier * dT;
+        }
 
         ballX += ballXspd * dT;
         ballY += ballYspd * dT;
@@ -130,15 +148,17 @@ public class Controller {
 
     }
 
-    private void checkWallCollision(){
+    private void checkWallCollision() {
         //Collision checking between ball and wall
         if (ballX + ballW >= gameW) {
             ballX = gameW - ballW;
             ballXspd *= -1;
+            System.out.println("L win point");
         }
         if (ballX <= 0) {
             ballX = 0;
             ballXspd *= -1;
+            System.out.println("R win point");
         }
         if (ballY + ballH >= gameH) {
             ballY = gameH - ballH;
@@ -150,7 +170,7 @@ public class Controller {
         }
     }
 
-    private void checkPaddleCollision(){
+    private void checkPaddleCollision() {
         paddleL.setFill(Color.CHOCOLATE);
         paddleR.setFill(Color.CHOCOLATE);
 
@@ -171,22 +191,21 @@ public class Controller {
         }
     }
 
-    private void checkInputs(){
+    private void checkInputs() {
         Main.mainScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                System.out.println("pressed: " + event.getCode());
                 switch (event.getCode()) {
                     case W:
-                        keyLUP = true;
+                        keyLUp = true;
                         break;
                     case S:
                         keyLDown = true;
                         break;
-                    case UP:
-                        keyRUP = true;
+                    case O:
+                        keyRUp = true;
                         break;
-                    case DOWN:
+                    case L:
                         keyRDown = true;
                         break;
                 }
@@ -196,18 +215,17 @@ public class Controller {
         Main.mainScene.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                System.out.println("released: " + event.getCode());
                 switch (event.getCode()) {
                     case W:
-                        keyLUP = false;
+                        keyLUp = false;
                         break;
                     case S:
                         keyLDown = false;
                         break;
-                    case UP:
-                        keyRUP = false;
+                    case O:
+                        keyRUp = false;
                         break;
-                    case DOWN:
+                    case L:
                         keyRDown = false;
                         break;
                 }
