@@ -1,31 +1,48 @@
 package sample;
 
 import javafx.animation.AnimationTimer;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.shape.Rectangle;
 
 public class Controller {
 
+    @FXML
+    private Rectangle ball;
 
-    static double spdMultiplier = 1;
 
-    static int ballX = 0;
-    static int ballY = 0;
-    static double ballXspd = 0;
-    static double ballYspd = 0;
+    double spdMultiplier = 0.0000005;
 
-    static int paddleLY = 0;
-    static int paddleRY = 0;
+    double gameW = 500;
+    double gameH = 500;
 
-    static long prevTime = 0;
+    double ballW;
+    double ballH;
 
-    public static void roundSetup() {
-        ballX = 0;
-        ballY = 0;
+    double ballX = 0;
+    double ballY = 0;
+    double ballXspd = 0;
+    double ballYspd = 0;
+
+    int paddleLY = 0;
+    int paddleRY = 0;
+
+    long prevTime = 0;
+
+    public void roundSetup() {
+        ballW = ball.getWidth();
+        ballH = ball.getHeight();
+
+        ballX = gameW /2 - ballW/2;
+        ballY = gameH /2 - ballH/2;
+        System.out.println(ballX);
+
         paddleLY = 0;
         paddleRY = 0;
 
         //Set initial ball speed
         ballXspd = Math.random() * spdMultiplier;
-        if (Math.random() < .5) ballXspd *= -1; //50% chance at inverting direction
+        if (Math.random() < .5) ballXspd *= 1; //50% chance at inverting direction
         ballYspd = Math.random() * spdMultiplier;
         if (Math.random() < .5) ballYspd *= -1; //50% chance at inverting direction
 
@@ -46,9 +63,22 @@ public class Controller {
         }.start();
     }
 
-    public static void onNewFrame(long dT) {
+    public void onNewFrame(long dT) {
 
+        if(ballX + ballW >= gameW){
+            ballX = gameW - ballW;
+            ballXspd*=-1;
+        }
+
+        ballX += ballXspd*dT;
+
+        System.out.println("ballX: " + ballX);
         System.out.println("new frame, dT: " + dT);
 
+        ball.setX(ballX);
+    }
+
+    public void nicebutton(ActionEvent actionEvent) {
+        roundSetup();
     }
 }
