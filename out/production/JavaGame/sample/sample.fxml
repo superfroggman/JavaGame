@@ -9,9 +9,11 @@
           xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
 
     <Button onAction="#nicebutton" text="start" GridPane.rowIndex="1"/>
-    <GridPane fx:id="gameGrid" prefHeight="500" prefWidth="500" GridPane.rowIndex="2">
+    <GridPane fx:id="gameGrid" GridPane.rowIndex="2">
         <Group fx:id="gameArea">
-            <Rectangle fx:id="ball" fill="aqua" width="40" height="40"/>
+            <Rectangle/>
+
+            <Rectangle fx:id="ball" fill="aqua" width="20" height="20"/>
             <Rectangle fx:id="paddleL" fill="chocolate" width="30" height="30"/>
             <Rectangle fx:id="paddleR" fill="darkmagenta" width="20" height="20"/>
         </Group>
