@@ -4,6 +4,7 @@ import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Group;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -18,21 +19,18 @@ public class Controller {
     private GridPane gameGrid;
 
     @FXML
-    private Rectangle paddleLRect;
-    @FXML
-    private Rectangle paddleRRect;
+    private Group gameArea;
+
+    Rectangle paddleRects[] = new Rectangle[2];
 
 
-    double ballSpdMultiplier = 0.000001;
 
     double gameW = 800;
     double gameH = 500;
 
     Ball ball = new Ball();
 
-    Paddle paddleL = new Paddle();
-
-    Paddle paddleR = new Paddle();
+    Paddle paddles[] = {new Paddle(), new Paddle()};
 
     long prevTime = 0;
 
@@ -43,6 +41,7 @@ public class Controller {
     boolean keyRDown = false;
 
     public void roundSetup() {
+
         //Setup game container
         gameGrid.setStyle("-fx-background-color: #C0C0C0;");
         gameGrid.setPrefSize(gameW, gameH);
@@ -55,35 +54,17 @@ public class Controller {
         ball.x = gameW / 2 - ball.width / 2;
         ball.y = gameH / 2 - ball.height / 2;
 
+        paddles[0].x = paddles[0].wallOffset;
+        paddles[1].x = gameW - paddles[1].wallOffset - paddles[1].width;
 
-        //Setup paddles
-        paddleLRect.setWidth(paddleL.width);
-        paddleLRect.setHeight(paddleL.height);
+        paddles[0].lPaddle = true;
 
-        paddleRRect.setWidth(paddleR.width);
-        paddleRRect.setHeight(paddleR.height);
-
-        paddleLRect.setX(paddleL.wallOffset);
-        paddleRRect.setX(gameW - paddleR.wallOffset - paddleR.width);
-
-        paddleL.x = paddleLRect.getX();
-        paddleR.x = paddleRRect.getX();
-
-        paddleL.y = gameH / 2 - paddleL.height / 2;
-        paddleR.y = gameH / 2 - paddleR.height / 2;
-
-
-        //Set initial ball speed
-        ball.xSpeed = Math.random();
-        if (ball.xSpeed < .5) {
-            ball.xSpeed = .5;
+        for (int i = 0; i < paddles.length; i++) {
+            paddles[i].y = gameH / 2 - paddles[i].height / 2;
+            paddleRects[i] = new Rectangle(paddles[i].x, paddles[i].y, paddles[i].width, paddles[i].height);
         }
-        ball.xSpeed *= ballSpdMultiplier;
-        if (Math.random() < .5) ball.xSpeed *= -1; //50% chance at inverting direction
-        ball.ySpeed = Math.random() * ballSpdMultiplier;
-        if (Math.random() < .5) ball.ySpeed *= -1; //50% chance at inverting direction
 
-        System.out.println("xSpd: " + ball.xSpeed + " ySpd: " + ball.ySpeed);
+        gameArea.getChildren().addAll(paddleRects);
 
 
         //Get initial time
@@ -108,69 +89,27 @@ public class Controller {
      * @param dT
      */
     public void onNewFrame(long dT) {
-        checkWallCollision();
-        checkPaddleCollision();
+        ball.checkWallCollision(gameW, gameH);
+        ball.checkPaddleCollision(paddles);
+
         checkInputs();
 
-        //Move paddles based on inputs
-        paddleL.move(keyLUp, keyLDown, dT, gameH);
-        paddleR.move(keyRUp, keyRDown, dT, gameH);
 
-        ball.x += ball.xSpeed * dT;
-        ball.y += ball.ySpeed * dT;
+        //Move paddles based on inputs
+        paddles[0].move(keyLUp, keyLDown, dT, gameH);
+        paddles[1].move(keyRUp, keyRDown, dT, gameH);
+
+        ball.move(dT);
 
         ballRect.setX(ball.x);
         ballRect.setY(ball.y);
 
 
-        paddleLRect.setY(paddleL.y);
-        paddleRRect.setY(paddleR.y);
+        paddleRects[0].setY(paddles[0].y);
+        paddleRects[1].setY(paddles[1].y);
     }
 
-    private void checkWallCollision() {
-        //Collision checking between ball and wall
-        if (ball.x + ball.width >= gameW) {
-            ball.x = gameW - ball.width;
-            ball.xSpeed *= -1;
-            System.out.println("L win point");
-        }
-        if (ball.x <= 0) {
-            ball.x = 0;
-            ball.xSpeed *= -1;
-            System.out.println("R win point");
-        }
-        if (ball.y + ball.height >= gameH) {
-            ball.y = gameH - ball.height;
-            ball.ySpeed *= -1;
-        }
-        if (ball.y <= 0) {
-            ball.y = 0;
-            ball.ySpeed *= -1;
-        }
-    }
 
-    private void checkPaddleCollision() {
-        paddleLRect.setFill(Color.CHOCOLATE);
-        paddleRRect.setFill(Color.CHOCOLATE);
-
-        //ball.checkPaddleCollision(paddleL, paddleR);
-
-        //check collision with left paddle
-        if (colliding(ball.x, ball.width, paddleLRect.getX(), paddleL.width)) {
-            if (colliding(ball.y, ball.height, paddleL.y, paddleL.height)) {
-                if (ball.xSpeed < 0) ball.xSpeed *= -1;
-                paddleLRect.setFill(Color.CRIMSON);
-            }
-        }
-
-        //check collision with right paddle
-        if (colliding(ball.x, ball.width, paddleRRect.getX(), paddleR.width)) {
-            if (colliding(ball.y, ball.height, paddleR.y, paddleR.height)) {
-                if (ball.xSpeed > 0) ball.xSpeed *= -1;
-                paddleRRect.setFill(Color.CRIMSON);
-            }
-        }
-    }
 
     private void checkInputs() {
         Main.mainScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -212,10 +151,6 @@ public class Controller {
                 }
             }
         });
-    }
-
-    private boolean colliding(double obj1Pos, double obj1Size, double obj2Pos, double obj2Size) {
-        return (obj1Pos >= obj2Pos && obj1Pos <= obj2Pos + obj2Size) || (obj1Pos + obj1Size >= obj2Pos && obj1Pos + obj1Size <= obj2Pos + obj2Size);
     }
 
     /**

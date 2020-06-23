@@ -11,11 +11,13 @@ public class Paddle {
     //Non configurable variables
     double x = 0;
     double y = 0;
+    boolean lPaddle = false;
 
 
-    /*
+
     public Paddle(){
-    }*/
+        System.out.println("paddle saying hi");
+    }
 
     public void move(boolean up, boolean down, double dT, double gameH){
         if (up) {
