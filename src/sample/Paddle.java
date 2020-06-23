@@ -9,7 +9,7 @@ public class Paddle {
     double speedMultiplier = 0.0000005;
 
     //Non configurable variables
-    //double x = 0;
+    double x = 0;
     double y = 0;
 
 

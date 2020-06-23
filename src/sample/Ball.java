@@ -12,10 +12,9 @@ public class Ball {
     double xSpeed = 0;
     double ySpeed = 0;
 
-    private void checkPaddleCollision(Paddle paddleL, Paddle paddleR) {
-        /*
+    public void checkPaddleCollision(Paddle paddleL, Paddle paddleR) {
         //check collision with left paddle
-        if (colliding(x, width, Controller.paddleLRect.getX(), paddleL.width)) {
+        if (colliding(x, width, paddleL.x, paddleL.width)) {
             if (colliding(ySpeed, height, paddleL.y, paddleL.height)) {
                 if (xSpeed < 0) xSpeed *= -1;
 
@@ -23,13 +22,11 @@ public class Ball {
         }
 
         //check collision with right paddle
-        if (colliding(x, width, Controller.paddleRRect.getX(), paddleR.width)) {
+        if (colliding(x, width, paddleR.x, paddleR.width)) {
             if (colliding(ySpeed, height, paddleR.y, paddleR.height)) {
                 if (xSpeed > 0) xSpeed *= -1;
             }
         }
-
-         */
     }
 
     private boolean colliding(double obj1Pos, double obj1Size, double obj2Pos, double obj2Size) {

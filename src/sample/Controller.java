@@ -66,6 +66,9 @@ public class Controller {
         paddleLRect.setX(paddleL.wallOffset);
         paddleRRect.setX(gameW - paddleR.wallOffset - paddleR.width);
 
+        paddleL.x = paddleLRect.getX();
+        paddleR.x = paddleRRect.getX();
+
         paddleL.y = gameH / 2 - paddleL.height / 2;
         paddleR.y = gameH / 2 - paddleR.height / 2;
 
@@ -149,6 +152,8 @@ public class Controller {
     private void checkPaddleCollision() {
         paddleLRect.setFill(Color.CHOCOLATE);
         paddleRRect.setFill(Color.CHOCOLATE);
+
+        //ball.checkPaddleCollision(paddleL, paddleR);
 
         //check collision with left paddle
         if (colliding(ball.x, ball.width, paddleLRect.getX(), paddleL.width)) {
