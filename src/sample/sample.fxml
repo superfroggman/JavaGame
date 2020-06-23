@@ -13,9 +13,9 @@
         <Group fx:id="gameArea">
             <Rectangle/>
 
-            <Rectangle fx:id="ball" fill="aqua" width="20" height="20"/>
-            <Rectangle fx:id="paddleL" fill="chocolate" width="30" height="30"/>
-            <Rectangle fx:id="paddleR" fill="darkmagenta" width="20" height="20"/>
+            <Rectangle fx:id="ballRect" fill="aqua" width="20" height="20"/>
+            <Rectangle fx:id="paddleLRect" fill="chocolate" width="30" height="30"/>
+            <Rectangle fx:id="paddleRRect" fill="darkmagenta" width="20" height="20"/>
         </Group>
     </GridPane>
 

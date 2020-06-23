@@ -12,40 +12,27 @@ import javafx.scene.shape.Rectangle;
 public class Controller {
 
     @FXML
-    private Rectangle ball;
+    private Rectangle ballRect;
 
     @FXML
     private GridPane gameGrid;
 
     @FXML
-    private Rectangle paddleL;
+    private Rectangle paddleLRect;
     @FXML
-    private Rectangle paddleR;
+    private Rectangle paddleRRect;
 
 
     double ballSpdMultiplier = 0.000001;
-    double paddleSpdMultiplier = 0.0000005;
 
     double gameW = 800;
     double gameH = 500;
 
-    double ballW = 20;
-    double ballH = 20;
+    Ball ball = new Ball();
 
-    double ballX = 0;
-    double ballY = 0;
-    double ballXspd = 0;
-    double ballYspd = 0;
+    Paddle paddleL = new Paddle();
 
-    double paddleLY = 0;
-    double paddleLW = 20;
-    double paddleLH = 100;
-
-    double paddleRY = 0;
-    double paddleRW = 20;
-    double paddleRH = 100;
-
-    double paddleWallOffset = 20;
+    Paddle paddleR = new Paddle();
 
     long prevTime = 0;
 
@@ -61,38 +48,39 @@ public class Controller {
         gameGrid.setPrefSize(gameW, gameH);
 
         //Set ball size
-        ball.setWidth(ballW);
-        ball.setHeight(ballH);
+        ballRect.setWidth(ball.width);
+        ballRect.setHeight(ball.height);
 
         //Center ball
-        ballX = gameW / 2 - ballW / 2;
-        ballY = gameH / 2 - ballH / 2;
+        ball.x = gameW / 2 - ball.width / 2;
+        ball.y = gameH / 2 - ball.height / 2;
+
 
         //Setup paddles
-        paddleL.setWidth(paddleLW);
-        paddleL.setHeight(paddleLH);
+        paddleLRect.setWidth(paddleL.width);
+        paddleLRect.setHeight(paddleL.height);
 
-        paddleR.setWidth(paddleRW);
-        paddleR.setHeight(paddleRH);
+        paddleRRect.setWidth(paddleR.width);
+        paddleRRect.setHeight(paddleR.height);
 
-        paddleL.setX(paddleWallOffset);
-        paddleR.setX(gameW - paddleWallOffset - paddleRW);
+        paddleLRect.setX(paddleL.wallOffset);
+        paddleRRect.setX(gameW - paddleR.wallOffset - paddleR.width);
 
-        paddleLY = gameH / 2 - paddleLH / 2;
-        paddleRY = gameH / 2 - paddleRH / 2;
+        paddleL.y = gameH / 2 - paddleL.height / 2;
+        paddleR.y = gameH / 2 - paddleR.height / 2;
 
 
         //Set initial ball speed
-        ballXspd = Math.random();
-        if (ballXspd < .5) {
-            ballXspd = .5;
+        ball.xSpeed = Math.random();
+        if (ball.xSpeed < .5) {
+            ball.xSpeed = .5;
         }
-        ballXspd *= ballSpdMultiplier;
-        if (Math.random() < .5) ballXspd *= -1; //50% chance at inverting direction
-        ballYspd = Math.random() * ballSpdMultiplier;
-        if (Math.random() < .5) ballYspd *= -1; //50% chance at inverting direction
+        ball.xSpeed *= ballSpdMultiplier;
+        if (Math.random() < .5) ball.xSpeed *= -1; //50% chance at inverting direction
+        ball.ySpeed = Math.random() * ballSpdMultiplier;
+        if (Math.random() < .5) ball.ySpeed *= -1; //50% chance at inverting direction
 
-        System.out.println("xSpd: " + ballXspd + " ySpd: " + ballYspd);
+        System.out.println("xSpd: " + ball.xSpeed + " ySpd: " + ball.ySpeed);
 
 
         //Get initial time
@@ -122,71 +110,59 @@ public class Controller {
         checkInputs();
 
         //Move paddles based on inputs
-        if (keyLUp && paddleLY > 0) {
-            paddleLY -= paddleSpdMultiplier * dT;
-        }
-        if (keyLDown && paddleLY + paddleLH < gameH){
-            paddleLY += paddleSpdMultiplier * dT;
-        }
-        if (keyRUp && paddleRY > 0) {
-            paddleRY -= paddleSpdMultiplier * dT;
-        }
-        if (keyRDown && paddleRY + paddleRH < gameH){
-            paddleRY += paddleSpdMultiplier * dT;
-        }
+        paddleL.move(keyLUp, keyLDown, dT, gameH);
+        paddleR.move(keyRUp, keyRDown, dT, gameH);
 
-        ballX += ballXspd * dT;
-        ballY += ballYspd * dT;
+        ball.x += ball.xSpeed * dT;
+        ball.y += ball.ySpeed * dT;
 
-        ball.setX(ballX);
-        ball.setY(ballY);
+        ballRect.setX(ball.x);
+        ballRect.setY(ball.y);
 
 
-        paddleL.setY(paddleLY);
-        paddleR.setY(paddleRY);
-
-
+        paddleLRect.setY(paddleL.y);
+        paddleRRect.setY(paddleR.y);
     }
 
     private void checkWallCollision() {
         //Collision checking between ball and wall
-        if (ballX + ballW >= gameW) {
-            ballX = gameW - ballW;
-            ballXspd *= -1;
+        if (ball.x + ball.width >= gameW) {
+            ball.x = gameW - ball.width;
+            ball.xSpeed *= -1;
             System.out.println("L win point");
         }
-        if (ballX <= 0) {
-            ballX = 0;
-            ballXspd *= -1;
+        if (ball.x <= 0) {
+            ball.x = 0;
+            ball.xSpeed *= -1;
             System.out.println("R win point");
         }
-        if (ballY + ballH >= gameH) {
-            ballY = gameH - ballH;
-            ballYspd *= -1;
+        if (ball.y + ball.height >= gameH) {
+            ball.y = gameH - ball.height;
+            ball.ySpeed *= -1;
         }
-        if (ballY <= 0) {
-            ballY = 0;
-            ballYspd *= -1;
+        if (ball.y <= 0) {
+            ball.y = 0;
+            ball.ySpeed *= -1;
         }
     }
 
     private void checkPaddleCollision() {
-        paddleL.setFill(Color.CHOCOLATE);
-        paddleR.setFill(Color.CHOCOLATE);
+        paddleLRect.setFill(Color.CHOCOLATE);
+        paddleRRect.setFill(Color.CHOCOLATE);
 
         //check collision with left paddle
-        if (colliding(ballX, ballW, paddleL.getX(), paddleLW)) {
-            if (colliding(ballY, ballH, paddleLY, paddleLH)) {
-                if (ballXspd < 0) ballXspd *= -1;
-                paddleL.setFill(Color.CRIMSON);
+        if (colliding(ball.x, ball.width, paddleLRect.getX(), paddleL.width)) {
+            if (colliding(ball.y, ball.height, paddleL.y, paddleL.height)) {
+                if (ball.xSpeed < 0) ball.xSpeed *= -1;
+                paddleLRect.setFill(Color.CRIMSON);
             }
         }
 
         //check collision with right paddle
-        if (colliding(ballX, ballW, paddleR.getX(), paddleRW)) {
-            if (colliding(ballY, ballH, paddleRY, paddleRH)) {
-                if (ballXspd > 0) ballXspd *= -1;
-                paddleR.setFill(Color.CRIMSON);
+        if (colliding(ball.x, ball.width, paddleRRect.getX(), paddleR.width)) {
+            if (colliding(ball.y, ball.height, paddleR.y, paddleR.height)) {
+                if (ball.xSpeed > 0) ball.xSpeed *= -1;
+                paddleRRect.setFill(Color.CRIMSON);
             }
         }
     }
