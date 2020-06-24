@@ -17,8 +17,8 @@ public class Ball {
     double xSpeed = 0;
     double ySpeed = 0;
     Rectangle rect;
-    
-    public Ball(double gameW, double gameH){
+
+    public Ball(double gameW, double gameH) {
 
         //Center ball
         x = gameW / 2 - width / 2;
@@ -34,31 +34,45 @@ public class Ball {
         ySpeed = Math.random() * ballSpdMultiplier;
         if (Math.random() < .5) ySpeed *= -1; //50% chance at inverting direction
 
-        System.out.println("xSpd: " + xSpeed + " ySpd: " + ySpeed);
+        //System.out.println("xSpd: " + xSpeed + " ySpd: " + ySpeed);
 
         rect = new Rectangle(x, y, width, height);
         rect.setFill(color);
     }
 
-    public void move(double dT){
-        x += xSpeed * dT;
-        y += ySpeed * dT;
+    public void move(double dT, double gameW, double gameH) {
+
+        if (x + xSpeed * dT > gameW){
+            x = gameW;
+        }
+        else {
+            x += xSpeed * dT;
+        }
+
+        if (y + ySpeed * dT > gameH){
+            y = gameH;
+        }
+        else {
+            y += ySpeed * dT;
+        }
+
+
 
         rect.setX(x);
         rect.setY(y);
     }
 
-    public void checkWallCollision(double gameW, double gameH){
+    public void checkWallCollision(double gameW, double gameH) {
         //Collision checking between ball and wall
         if (x + width >= gameW) {
             x = gameW - width;
             xSpeed *= -1;
-            System.out.println("L win point");
+            //System.out.println("L win point");
         }
         if (x <= 0) {
             x = 0;
             xSpeed *= -1;
-            System.out.println("R win point");
+            //System.out.println("R win point");
         }
 
         if (y + height >= gameH) {
@@ -72,11 +86,11 @@ public class Ball {
     }
 
     public void checkPaddleCollision(Paddle[] paddles) {
-        for(Paddle paddle : paddles) {
+        for (Paddle paddle : paddles) {
             if (colliding(x, width, paddle.x, paddle.width)) {
                 if (colliding(y, height, paddle.y, paddle.height)) {
-                    if(paddle.lPaddle && xSpeed < 0) xSpeed *= -1;
-                    if(!paddle.lPaddle && xSpeed > 0) xSpeed *= -1;
+                    if (paddle.lPaddle && xSpeed < 0) xSpeed *= -1;
+                    if (!paddle.lPaddle && xSpeed > 0) xSpeed *= -1;
                 }
             }
         }

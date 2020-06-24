@@ -52,7 +52,7 @@ public class Controller {
             gameArea.getChildren().add(paddle.rect);
         }
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 2000; i++) {
             newBall();
         }
 
@@ -94,7 +94,7 @@ public class Controller {
         paddles[1].move(keyRUp, keyRDown, dT, gameH);
 
         for (int i = 0; i < balls.size(); i++) {
-            balls.get(i).move(dT);
+            balls.get(i).move(dT, gameW, gameH);
 
             balls.get(i).checkWallCollision(gameW, gameH);
             balls.get(i).checkPaddleCollision(paddles);
