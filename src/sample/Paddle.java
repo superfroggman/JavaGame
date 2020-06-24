@@ -1,5 +1,8 @@
 package sample;
 
+
+import javafx.scene.shape.Rectangle;
+
 public class Paddle {
 
     //Configurable variables
@@ -12,11 +15,23 @@ public class Paddle {
     double x = 0;
     double y = 0;
     boolean lPaddle = false;
+    Rectangle rect;
 
 
 
-    public Paddle(){
-        //System.out.println("paddle saying hi");
+
+    public Paddle(boolean inLPaddle, double gameW, double gameH){
+        lPaddle = inLPaddle;
+
+        if(lPaddle){
+            x = wallOffset;
+        }
+        else {
+            x = gameW - wallOffset - width;
+        }
+        y = gameH / 2 - height / 2;
+        
+        rect = new Rectangle(x, y, width, height);
     }
 
     public void move(boolean up, boolean down, double dT, double gameH){
@@ -33,5 +48,7 @@ public class Paddle {
                 y = gameH - height;
             }
         }
+
+        rect.setY(y);
     }
 }

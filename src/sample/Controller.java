@@ -23,17 +23,17 @@ public class Controller {
     @FXML
     private Group ballContainer;
 
-    Rectangle[] paddleRects = new Rectangle[2];
-    Paddle[] paddles = {new Paddle(), new Paddle()};
-
     ArrayList<Ball> balls = new ArrayList<>();
 
 
     double gameW = 800;
     double gameH = 500;
 
-
     long prevTime = 0;
+
+    Paddle[] paddles = {
+            new Paddle(true, gameW, gameH),
+            new Paddle(false, gameW, gameH)};
 
     boolean keyLUp = false;
     boolean keyLDown = false;
@@ -48,23 +48,13 @@ public class Controller {
         gameGrid.setStyle("-fx-background-color: #C0C0C0;");
         gameGrid.setPrefSize(gameW, gameH);
 
-
-        paddles[0].x = paddles[0].wallOffset;
-        paddles[1].x = gameW - paddles[1].wallOffset - paddles[1].width;
-
-        paddles[0].lPaddle = true;
-
-        for (int i = 0; i < paddles.length; i++) {
-            paddles[i].y = gameH / 2 - paddles[i].height / 2;
-            paddleRects[i] = new Rectangle(paddles[i].x, paddles[i].y, paddles[i].width, paddles[i].height);
+        for (Paddle paddle : paddles) {
+            gameArea.getChildren().add(paddle.rect);
         }
-        gameArea.getChildren().addAll(paddleRects);
 
-        for (int i = 0; i < 200; i++) {
+        for (int i = 0; i < 20; i++) {
             newBall();
         }
-
-        //newBall();
 
 
         //Get initial time
@@ -104,15 +94,11 @@ public class Controller {
         paddles[1].move(keyRUp, keyRDown, dT, gameH);
 
         for (int i = 0; i < balls.size(); i++) {
+            balls.get(i).move(dT);
+
             balls.get(i).checkWallCollision(gameW, gameH);
             balls.get(i).checkPaddleCollision(paddles);
-
-            balls.get(i).move(dT);
         }
-
-
-        paddleRects[0].setY(paddles[0].y);
-        paddleRects[1].setY(paddles[1].y);
     }
 
 

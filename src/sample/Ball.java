@@ -5,16 +5,17 @@ import javafx.scene.shape.Rectangle;
 
 public class Ball {
 
+    //Configurable variables
     double width = 20;
     double height = 20;
+    double ballSpdMultiplier = 0.000001;
+    Color color = Color.PALEVIOLETRED;
 
+    //Non configurable variables
     double x = 0;
     double y = 0;
     double xSpeed = 0;
     double ySpeed = 0;
-
-    double ballSpdMultiplier = 0.000001;
-    
     Rectangle rect;
     
     public Ball(double gameW, double gameH){
@@ -36,6 +37,7 @@ public class Ball {
         System.out.println("xSpd: " + xSpeed + " ySpd: " + ySpeed);
 
         rect = new Rectangle(x, y, width, height);
+        rect.setFill(color);
     }
 
     public void move(double dT){
@@ -58,6 +60,7 @@ public class Ball {
             xSpeed *= -1;
             System.out.println("R win point");
         }
+
         if (y + height >= gameH) {
             y = gameH - height;
             ySpeed *= -1;
@@ -68,7 +71,7 @@ public class Ball {
         }
     }
 
-    public void checkPaddleCollision(Paddle paddles[]) {
+    public void checkPaddleCollision(Paddle[] paddles) {
         for(Paddle paddle : paddles) {
             if (colliding(x, width, paddle.x, paddle.width)) {
                 if (colliding(y, height, paddle.y, paddle.height)) {
