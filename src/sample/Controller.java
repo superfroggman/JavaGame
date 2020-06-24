@@ -48,11 +48,14 @@ public class Controller {
         gameGrid.setStyle("-fx-background-color: #C0C0C0;");
         gameGrid.setPrefSize(gameW, gameH);
 
+        gameGrid.setMaxSize(gameW, gameH);
+
+
         for (Paddle paddle : paddles) {
             gameArea.getChildren().add(paddle.rect);
         }
 
-        for (int i = 0; i < 2000; i++) {
+        for (int i = 0; i < 10; i++) {
             newBall();
         }
 
@@ -99,6 +102,9 @@ public class Controller {
             balls.get(i).checkWallCollision(gameW, gameH);
             balls.get(i).checkPaddleCollision(paddles);
         }
+
+        if (gameGrid.getWidth() > gameW) System.out.println("W: " + gameGrid.getWidth());
+        if (gameGrid.getHeight() > gameH) System.out.println("H: " + gameGrid.getHeight());
     }
 
 
