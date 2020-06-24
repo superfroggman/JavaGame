@@ -12,7 +12,7 @@
     <GridPane fx:id="gameGrid" GridPane.rowIndex="2">
         <Group fx:id="gameArea">
             <Rectangle/>
-            <Rectangle fx:id="ballRect" fill="aqua" width="20" height="20"/>
+            <Group fx:id="ballContainer"/>
         </Group>
     </GridPane>
 

@@ -1,6 +1,7 @@
 package sample;
 
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 public class Ball {
 
@@ -12,9 +13,16 @@ public class Ball {
     double xSpeed = 0;
     double ySpeed = 0;
 
-    double ballSpdMultiplier = 0.0000001;
+    double ballSpdMultiplier = 0.000001;
     
-    public Ball(){
+    Rectangle rect;
+    
+    public Ball(double gameW, double gameH){
+
+        //Center ball
+        x = gameW / 2 - width / 2;
+        y = gameH / 2 - height / 2;
+
         //Set initial ball speed
         xSpeed = Math.random();
         if (xSpeed < .5) {
@@ -26,12 +34,16 @@ public class Ball {
         if (Math.random() < .5) ySpeed *= -1; //50% chance at inverting direction
 
         System.out.println("xSpd: " + xSpeed + " ySpd: " + ySpeed);
+
+        rect = new Rectangle(x, y, width, height);
     }
 
     public void move(double dT){
         x += xSpeed * dT;
         y += ySpeed * dT;
 
+        rect.setX(x);
+        rect.setY(y);
     }
 
     public void checkWallCollision(double gameW, double gameH){
