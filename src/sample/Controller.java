@@ -21,7 +21,7 @@ public class Controller {
     @FXML
     private Group gameArea;
 
-    Rectangle paddleRects[] = new Rectangle[2];
+    Rectangle[] paddleRects = new Rectangle[2];
 
 
 
@@ -30,7 +30,7 @@ public class Controller {
 
     Ball ball = new Ball();
 
-    Paddle paddles[] = {new Paddle(), new Paddle()};
+    Paddle[] paddles = {new Paddle(), new Paddle()};
 
     long prevTime = 0;
 
@@ -93,7 +93,6 @@ public class Controller {
         ball.checkPaddleCollision(paddles);
 
         checkInputs();
-
 
         //Move paddles based on inputs
         paddles[0].move(keyLUp, keyLDown, dT, gameH);
